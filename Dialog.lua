@@ -1,3 +1,18 @@
+local loop = function(f, ticks, ...)
+	local timers, index = { }, 0
+	local addTimer = function(_, ...)
+		index = index + 1
+		timers[index] = system.newTimer(f, 1000, true, ...)
+	end
+
+	local seconds = 1000 / ticks
+	for timer = 0, 1000 - seconds, seconds do
+		system.newTimer(addTimer, 1000 + timer, false, ...)
+	end
+
+	return timers
+end
+
 -- UTF8
 do
 	-- Based on Luvit's ustring
@@ -46,22 +61,6 @@ do
 
 		return utf8str
 	end
-end
-
--- Loop
-local loop = function(f, ticks, ...)
-	local timers, index = { }, 0
-	local addTimer = function(_, ...)
-		index = index + 1
-		timers[index] = system.newTimer(f, 1000, true, ...)
-	end
-
-	local seconds = 1000 / ticks
-	for timer = 0, 1000 - seconds, seconds do
-		system.newTimer(addTimer, 1000 + timer, false, ...)
-	end
-
-	return timers
 end
 
 -- Class
@@ -183,7 +182,7 @@ do
 	dialog.setLoop = function(ticks)
 		if loopTimers then
 			for i = 1, #loopTimers do
-				system.removeTimer(loopTimers)
+				system.removeTimer(loopTimers[i])
 			end
 		end
 
