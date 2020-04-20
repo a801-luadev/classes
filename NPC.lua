@@ -104,7 +104,6 @@ do
 	npc.setAction = function(self, action)
 		self:resetAction()
 		self.action = action
-		self.looping = true
 
 		return self
 	end
